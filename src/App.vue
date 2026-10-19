@@ -83,7 +83,7 @@ import RenovationAssistant from './components/RenovationAssistant.vue'
     <!-- AI RENOVATION ASSISTANT -->
     <!-- Keep this outside main so the chat floats above every page section. -->
     <RenovationAssistant
-      webhook-url="https://n8n.srv1102332.hstgr.cloud/webhook/reno-assistant"
+      webhook-url="https://n8n.srv1102332.hstgr.cloud/webhook/reno-assistants"
       :max-files="3"
       :max-file-m-b="10"
       :history-turns="10"
