@@ -81,7 +81,7 @@
 import { ref, computed, nextTick, onMounted, onBeforeUnmount, defineComponent, h } from 'vue'
 
 const props = defineProps({
-  webhookUrl: { type: String, default: 'https://n8n.srv1102332.hstgr.cloud/webhook/reno-assistant' },
+  webhookUrl: { type: String, default: 'https://n8n.srv1102332.hstgr.cloud/webhook/reno-assistants' },
   maxFileMB: { type: Number, default: 10 },
   maxFiles: { type: Number, default: 3 },
   historyTurns: { type: Number, default: 10 },
