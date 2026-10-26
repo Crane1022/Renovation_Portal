@@ -47,7 +47,8 @@ onMounted(() => {
     const CONFIG = {
       SHEET_ID: '1ikb8sfE3h2kMOVmklNoRyDyEo8o8lBUFtjUcU2kGotw',
       TAB: 'Products',
-      MOBILE_PAGE_SIZE: 6
+      MOBILE_PAGE_SIZE: 6,
+      FEATURED_CATEGORY: 'Mini Set'
     };
 
     let catalogProducts = [];
@@ -62,7 +63,9 @@ onMounted(() => {
     const num = v => Number(String(v == null ? '' : v).replace(/[^0-9.]/g, '')) || 0;
     const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const formatPrice = n => 'RM ' + n.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
+    const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const isFeatured = p => norm(p.category) === norm(CONFIG.FEATURED_CATEGORY) || norm(p.subcategory) === norm(CONFIG.FEATURED_CATEGORY);
+    
     function placeholder(text) {
       const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'><rect width='600' height='400' fill='#F0EFEA'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='22' fill='#6C756D'>${esc(text)}</text></svg>`;
       return 'data:image/svg+xml,' + encodeURIComponent(svg);
@@ -123,28 +126,31 @@ onMounted(() => {
 
       categories = [];
       catalogProducts.forEach(p => {
-        if (!categories.includes(p.category)) categories.push(p.category);
+        if (!isFeatured(p) && !categories.includes(p.category)) categories.push(p.category);
       });
+      // Mini Set is pinned as the 2nd filter (right after All)
+      if (catalogProducts.some(isFeatured)) categories.unshift(CONFIG.FEATURED_CATEGORY);
     }
 
     function renderFilters() {
       const box = document.getElementById('shopCategoryFilters');
       if (!box) return;
-
-      box.innerHTML = ['All', ...categories].map(cat => `
-        <button type="button" class="shop-cat-btn ${cat === currentCategory ? 'active' : ''}" data-cat="${esc(cat)}">
-          ${esc(cat)}
-        </button>
-      `).join('');
+      box.innerHTML = ['All', ...categories].map(cat => {
+        const feat = norm(cat) === norm(CONFIG.FEATURED_CATEGORY);
+        return `<button type="button" class="shop-cat-btn ${feat ? 'featured' : ''} ${cat === currentCategory ? 'active' : ''}" data-cat="${esc(cat)}">${feat ? '★ ' : ''}${esc(cat)}</button>`;
+      }).join('');
     }
 
     function getFilteredProducts() {
-      return catalogProducts.filter(p => {
-        const matchCat = currentCategory === 'All' || p.category === currentCategory;
-        const q = searchQuery.toLowerCase();
+      const q = searchQuery.toLowerCase();
+      const list = catalogProducts.filter(p => {
+        const matchCat = currentCategory === 'All' ||
+          (norm(currentCategory) === norm(CONFIG.FEATURED_CATEGORY) ? isFeatured(p) : p.category === currentCategory);
         const matchSearch = !q || p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.category.toLowerCase().includes(q);
         return matchCat && matchSearch;
       });
+      // in "All", show the recommended Mini Set items first
+      return currentCategory === 'All' ? [...list.filter(isFeatured), ...list.filter(p => !isFeatured(p))] : list;
     }
 
     function renderGrid() {
@@ -185,10 +191,10 @@ onMounted(() => {
         const imgSrc = p.image || placeholder(p.name);
 
         return `
-          <div class="shop-card ${qty > 0 ? 'in-cart' : ''}" data-id="${esc(p.id)}">
+          <div class="shop-card ${qty > 0 ? 'in-cart' : ''} ${isFeatured(p) ? 'featured' : ''}"data-id="${esc(p.id)}">
             <div class="shop-card-img-wrap shop-img-trigger" data-img="${esc(imgSrc)}" data-title="${esc(p.name)}" title="Click to view full image">
               <img class="shop-card-img" src="${esc(imgSrc)}" alt="${esc(p.name)}" loading="lazy" onError="this.onerror=null;this.src='${placeholder(p.name)}';"/>
-              <span class="shop-card-cat-tag">${esc(p.category)}</span>
+              <span class="shop-card-cat-tag">${isFeatured(p) ? '<span class="shop-card-reco">★ Recommended</span>' : ''}${esc(p.category)}</span>
             </div>
             <div class="shop-card-body">
               <h3 class="shop-card-title">${esc(p.name)}</h3>
@@ -356,6 +362,9 @@ onMounted(() => {
         }
       }
     }
+
+    // Quotation changed the cart (qty / remove) -> redraw the cards
+    window.addEventListener('cart:external', () => { try { renderGrid(); } catch (e) {} });
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init);
@@ -840,6 +849,19 @@ onMounted(() => {
 }
 
 /* 2 COLUMNS GRID & MOBILE ADAPTATION (< 640px) */
+/* FEATURED CATEGORY (Mini Set) */
+.shop-cat-btn.featured { border-color: var(--shop-accent); color: var(--shop-accent); background: #FBF5EE; }
+.shop-cat-btn.featured:hover { border-color: var(--shop-accent); color: #a5733f; }
+.shop-cat-btn.featured.active { background: var(--shop-accent); border-color: var(--shop-accent); color: #fff; }
+.shop-card.featured { border-color: var(--shop-accent); }
+.shop-card-reco {
+  position: absolute; top: 10px; right: 10px;
+  background: var(--shop-accent); color: #fff;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+  padding: 3px 8px; border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15); pointer-events: none;
+}
+
 @media screen and (max-width: 639px) {
   .shop-wrapper {
     width: 100% !important;
