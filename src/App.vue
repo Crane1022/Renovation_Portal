@@ -102,7 +102,7 @@ function resetQuotation() {
 
         <div class="flex items-center gap-3">
           <span class="text-xl font-bold tracking-tight uppercase font-serif text-stone-900">
-            NextGen Renovation
+            NextGen
           </span>
         </div>
 
@@ -191,8 +191,8 @@ function resetQuotation() {
             class="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-stone-200 bg-stone-100 flex items-center justify-center p-8"
           >
             <img
-              src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/urgz3ehyjizBb14KYhgn/media/6a14fef0e05851175c85cb0e.png"
-              alt="NextGen Renovation Preview"
+              src=""
+              alt="NextGen Preview"
               class="max-h-24 opacity-80"
             />
           </div>
@@ -251,7 +251,6 @@ function resetQuotation() {
             :selected-property-is-custom="selectedPropertyIsCustom"
             :selected-size="selectedSize"
             :selected-bedrooms="selectedBedrooms"
-            submit-url="/api/quotation"
             @reset="resetQuotation"
           />
 
@@ -278,10 +277,10 @@ function resetQuotation() {
           <p>
             Concierge Email:
             <a
-              href="mailto:inquiry@company.com"
+              href="mailto:inquiry@nextgen.com"
               class="text-white underline underline-offset-4"
             >
-              inquiry@company.com
+              inquiry@nextgen.com
             </a>
           </p>
         </div>
@@ -292,7 +291,7 @@ function resetQuotation() {
           </h4>
 
           <p>
-            NextGen Renovation<br />
+            NextGen Sdn Bhd<br />
             Unit 01-01, First Floor, Micasa Shoppes,
             368-A, Jalan Tun Razak, 50400 Kuala Lumpur
           </p>
@@ -304,7 +303,7 @@ function resetQuotation() {
           </h4>
 
           <p>
-            © 2026 NextGen Renovation Sdn Bhd. All rights reserved.
+            © 2026 NextGen Sdn Bhd. All rights reserved.
             <br />
             <a href="#" class="hover:underline">Terms of Service</a>
             |

@@ -10,7 +10,7 @@ const props = defineProps({
   selectedPropertyIsCustom: { type: Boolean, default: false },
   selectedSize: { type: [String, Number], default: '' },
   selectedBedrooms: { type: [String, Number], default: '' },
-  submitUrl: { type: String, default: '/api/quotation' },
+  submitUrl: { type: String, default: import.meta.env.VITE_QUOTATION_URL || '' },
   sheetId: { type: String, default: '' },
   packageTab: { type: String, default: 'Packages' },
   productsTab: { type: String, default: 'Products' },
@@ -40,6 +40,7 @@ const lock = computed(() => lockProduct.value || lockFallback)
 const printSheet = ref(null)
 const lastData = ref(null)
 const lastResult = ref(null)
+const lastAction = ref('')
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]))
 
 function changeQty(idx, raw) {
@@ -525,11 +526,12 @@ async function process(action) {
     const timeout = setTimeout(() => controller.abort(), 25000)
     let result
     try {
-      const res = await fetch(props.submitUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload), signal:controller.signal })
+      if (!props.submitUrl) throw new Error('Submit URL missing. Set VITE_QUOTATION_URL.')
+      const res = await fetch(props.submitUrl, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload), signal:controller.signal })
       result = await res.json()
       if (!res.ok || !result.ok) throw new Error(result.error || 'Submission failed')
     } finally { clearTimeout(timeout) }
-    lastData.value = d; lastResult.value = result
+    lastData.value = d; lastResult.value = result; lastAction.value = action
     status.value = ''; successOpen.value = true
     emit('submitted', { action, data: d, result })
   } catch (e) { status.value = 'We could not submit your quotation. Please check your connection and try again.'; console.error(e); submitting.value = false }
@@ -537,6 +539,12 @@ async function process(action) {
 async function finishSuccess() {
   successOpen.value = false
   if (!lastData.value) return
+  // Book Consultation: data is saved, nothing to print -> unlock and reset
+  if (lastAction.value !== 'Print / PDF') {
+    submitting.value = false
+    if (props.resetAfterPrint) emit('reset')
+    return
+  }
   const d = lastData.value
   if (printSheet.value) printSheet.value.innerHTML = buildQuotationMarkup(d)
   await nextTick()

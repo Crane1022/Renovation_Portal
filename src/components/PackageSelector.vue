@@ -69,7 +69,7 @@ import { onMounted } from 'vue'
 // The original <script> code runs once, after the HTML above is on the page.
 onMounted(() => {
   (function () {
-    const SHEET_ID = '1ikb8sfE3h2kMOVmklNoRyDyEo8o8lBUFtjUcU2kGotw';
+    const SHEET_ID = '1aoMPw_jfjZjQ2Q-Wtg4zXkTItbE89hu-P2X8qZwfkyY';
     const TAB_NAME = 'Packages';
 
     function parseCSV(text) {
@@ -197,7 +197,7 @@ onMounted(() => {
 
   (function () {
   const CONFIG = {
-    SHEET_ID: '1ikb8sfE3h2kMOVmklNoRyDyEo8o8lBUFtjUcU2kGotw',
+    SHEET_ID: '1aoMPw_jfjZjQ2Q-Wtg4zXkTItbE89hu-P2X8qZwfkyY',
     TABS: { packages: 'Packages', items: 'Package_Items', products: 'Products' }
   };
 

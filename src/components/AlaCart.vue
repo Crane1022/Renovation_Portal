@@ -45,7 +45,7 @@ import { onMounted } from 'vue'
 onMounted(() => {
   (function () {
     const CONFIG = {
-      SHEET_ID: '1ikb8sfE3h2kMOVmklNoRyDyEo8o8lBUFtjUcU2kGotw',
+      SHEET_ID: '1aoMPw_jfjZjQ2Q-Wtg4zXkTItbE89hu-P2X8qZwfkyY',
       TAB: 'Products',
       MOBILE_PAGE_SIZE: 6,
       FEATURED_CATEGORY: 'Mini Set'
