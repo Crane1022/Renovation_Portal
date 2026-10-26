@@ -191,9 +191,9 @@ function resetQuotation() {
             class="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-stone-200 bg-stone-100 flex items-center justify-center p-8"
           >
             <img
-              src=""
+              src="https://lh3.googleusercontent.com/d/13_GLXRWzNQX4RzvzC5wnQZvnwtMTnOQj=s800"
               alt="NextGen Preview"
-              class="max-h-24 opacity-80"
+              class="max-h-full opacity-100 transition-opacity"
             />
           </div>
         </div>
